@@ -1,0 +1,7 @@
+{
+  "name": "蓉城资管公司资产地图",
+  "description": "专业级资产管理可视化平台，提供全方位的资产搜索、地图定位及详细信息展示功能，支持实时数据分析与智能查询。",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
