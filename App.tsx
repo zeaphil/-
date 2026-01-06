@@ -5,18 +5,23 @@ import { Asset } from './types';
 import Sidebar from './components/Sidebar';
 import MapView from './components/MapView';
 import AssetDetails from './components/AssetDetails';
+import { X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [hoveredAssetId, setHoveredAssetId] = useState<number | null>(null);
 
+  const hasSelection = !!selectedAsset;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // 电脑端：只要有搜索词就显示列表。移动端：有选中项时优先显示详情，隐藏列表。
+  const showList = searchTerm.trim().length > 0 && (!isMobile || !hasSelection);
+
   const filteredAssets = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) return ASSET_DATA;
-
     const keywords = term.split(/\s+/).filter(k => k.length > 0);
-    
     return ASSET_DATA.filter(asset => {
       const searchIndex = [
         asset.资产名称,
@@ -27,7 +32,6 @@ const App: React.FC = () => {
         asset.招商负责人,
         asset.物业管理单位
       ].join(' ').toLowerCase();
-
       return keywords.every(keyword => searchIndex.includes(keyword));
     });
   }, [searchTerm]);
@@ -36,67 +40,86 @@ const App: React.FC = () => {
     setSelectedAsset(asset);
   }, []);
 
+  const handleClearSelection = () => {
+    setSelectedAsset(null);
+  };
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden text-gray-900 bg-white">
-      {/* 典雅深紫色渐变顶栏 - 已移除图标 */}
-      <header className="flex items-center justify-between px-8 py-5 bg-gradient-to-r from-[#4a3075] to-[#63459d] text-white shadow-xl z-50">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold tracking-widest font-serif">蓉城资管公司资产地图</h1>
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
+      {/* 极简顶部栏 */}
+      <header className="flex items-center justify-between px-6 py-2 bg-white/80 backdrop-blur-md border-b border-slate-100 z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-violet-600 rounded flex items-center justify-center font-bold text-white text-[10px]">RC</div>
+          <h1 className="text-sm font-black tracking-tight text-slate-800">蓉城资管公司资产地图</h1>
         </div>
-        <div className="flex items-center gap-6 text-sm font-medium">
-          <div className="flex flex-col items-end">
-            <span className="opacity-70 text-[10px] uppercase tracking-tighter">Total Assets</span>
-            <span className="text-lg font-light">{ASSET_DATA.length} 个项目</span>
-          </div>
-          <div className="w-px h-8 bg-white/20"></div>
-          <div className="flex flex-col items-end text-amber-200">
-            <span className="opacity-70 text-[10px] uppercase tracking-tighter">Data Version</span>
-            <span className="text-lg font-light italic">2024 V2.2</span>
+        <div className="flex items-center gap-4">
+          <div className="text-[10px] font-bold text-slate-400 tabular-nums">
+            已载入 {ASSET_DATA.length} 宗资产
           </div>
         </div>
       </header>
 
-      {/* 主体布局：左侧搜索，中间地图，右侧信息 */}
-      <main className="flex-1 flex overflow-hidden">
-        
-        {/* 左边搜索 */}
-        <section className="w-1/4 border-r border-gray-200 flex flex-col bg-gray-50 shadow-inner z-30">
-          <Sidebar 
-            assets={filteredAssets}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            selectedAssetId={selectedAsset?.序号 ?? null}
-            onSelectAsset={handleSelectAsset}
-            setHoveredAssetId={setHoveredAssetId}
-          />
-        </section>
-
-        {/* 中间地图 */}
-        <section className="flex-1 relative z-10 bg-[#f4f1f8]">
+      {/* 交互主体 */}
+      <main className="flex-1 relative overflow-hidden">
+        {/* 底层地图 */}
+        <div className="absolute inset-0 z-0">
           <MapView 
-            assets={filteredAssets}
+            assets={filteredAssets} 
             selectedAsset={selectedAsset}
             onMarkerClick={handleSelectAsset}
             hoveredAssetId={hoveredAssetId}
+            showSidebar={showList}
           />
-        </section>
-
-        {/* 右边项目信息 */}
-        <section className="w-1/4 border-l border-gray-200 flex flex-col bg-white shadow-2xl z-20">
-          <AssetDetails asset={selectedAsset} />
-        </section>
-
-      </main>
-
-      {/* 页脚信息 */}
-      <footer className="px-6 py-2 bg-[#4a3075] border-t border-white/10 text-xs text-white/60 flex justify-between items-center">
-        <span>© 2024 蓉城资产管理有限公司 - 专业资产管理领航者</span>
-        <div className="flex gap-4">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-400"></span> 高空置</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400"></span> 中空置</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400"></span> 运营稳健</span>
         </div>
-      </footer>
+
+        {/* 悬浮交互层 */}
+        <div className="absolute inset-0 z-10 pointer-events-none flex flex-col md:flex-row p-4 md:p-4 justify-between items-start h-full">
+          
+          {/* 左侧：搜索控制台 */}
+          <div className={`
+            pointer-events-auto transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1)
+            w-full md:w-64 lg:w-72
+            bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 flex flex-col
+            ${showList ? 'h-[40vh] md:h-[calc(100vh-80px)]' : 'h-auto'}
+          `}>
+            <Sidebar 
+              assets={showList ? filteredAssets : []} 
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedAssetId={selectedAsset?.序号 ?? null}
+              onSelectAsset={handleSelectAsset}
+              setHoveredAssetId={setHoveredAssetId}
+              hideList={!showList}
+            />
+          </div>
+
+          {/* 右侧：详情卡片 (宽度260px，比之前增加30%) */}
+          <div className={`
+            pointer-events-auto transition-all duration-500 transform
+            fixed md:static inset-x-4 bottom-4 md:inset-auto
+            w-auto md:w-64 lg:w-[260px]
+            max-h-[85vh] md:h-auto
+            bg-white/95 backdrop-blur-lg rounded-[1.5rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] 
+            border border-slate-100 flex flex-col overflow-hidden z-20
+            ${hasSelection 
+              ? 'translate-y-0 opacity-100 scale-100' 
+              : 'translate-y-[120%] md:translate-x-[120%] opacity-0'
+            }
+          `}>
+            {selectedAsset && (
+              <div className="relative flex flex-col">
+                <button 
+                  onClick={handleClearSelection}
+                  className="absolute top-3 right-3 z-30 p-1.5 bg-slate-100/50 hover:bg-white rounded-full text-slate-400 hover:text-gray-600 transition-all"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <AssetDetails asset={selectedAsset} />
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
