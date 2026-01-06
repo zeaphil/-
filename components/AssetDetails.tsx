@@ -4,14 +4,12 @@ import { Asset } from '../types';
 import { 
   Building2, 
   MapPin, 
-  Ruler, 
   User, 
   Phone, 
   ShieldCheck, 
   TrendingDown, 
   Navigation,
-  Info,
-  Calendar
+  Info
 } from 'lucide-react';
 
 interface AssetDetailsProps {
@@ -22,11 +20,11 @@ const AssetDetails: React.FC<AssetDetailsProps> = ({ asset }) => {
   if (!asset) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-10 text-center text-gray-400 bg-white">
-        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-          <Info className="w-10 h-10 text-gray-300" />
+        <div className="w-20 h-20 bg-violet-50 rounded-full flex items-center justify-center mb-6">
+          <Info className="w-10 h-10 text-violet-200" />
         </div>
         <h3 className="text-lg font-bold text-gray-600 mb-2">欢迎查阅</h3>
-        <p className="text-sm">请点击地图上的标记或在左侧搜索列表中选择资产，以查看详细的项目信息情况。</p>
+        <p className="text-sm">请点击地图标记或列表项查阅资产详情</p>
       </div>
     );
   }
@@ -37,135 +35,127 @@ const AssetDetails: React.FC<AssetDetailsProps> = ({ asset }) => {
 
   return (
     <div className="flex-1 overflow-y-auto flex flex-col bg-white">
-      {/* Detail Header */}
-      <div className="p-6 bg-gradient-to-br from-blue-900 to-blue-800 text-white">
-        <div className="flex justify-between items-start mb-4">
-          <span className="px-2 py-1 bg-white/20 rounded text-[10px] font-bold uppercase tracking-widest">序号: {asset.序号}</span>
-          <span className={`px-2 py-1 rounded text-[10px] font-bold border ${vacancyColorClass.replace('bg-', 'bg-white/90 bg-')}`}>
-            {asset.空置程度标签}空置率
+      {/* Detail Header - Updated to Deep Purple */}
+      <div className="p-8 bg-gradient-to-br from-[#4a3075] to-[#63459d] text-white">
+        <div className="flex justify-between items-start mb-6">
+          <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20">
+            PROJECT ID: {asset.序号}
+          </span>
+          <span className={`px-2 py-1 rounded text-[10px] font-bold border bg-white/90 ${vacancyColorClass}`}>
+            {asset.空置程度标签}空置
           </span>
         </div>
-        <h2 className="text-2xl font-black mb-2 leading-tight">{asset.资产名称}</h2>
-        <div className="flex items-center gap-2 text-blue-200 text-xs">
-          <Building2 className="w-3.5 h-3.5" />
-          <span>{asset.资产类别}</span>
+        <h2 className="text-2xl font-black mb-3 leading-tight tracking-wide">{asset.资产名称}</h2>
+        <div className="flex items-center gap-2 text-violet-200 text-xs">
+          <Building2 className="w-4 h-4" />
+          <span className="font-medium">{asset.资产类别}</span>
         </div>
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 border-b border-gray-100 bg-gray-50/50">
-        <div className="p-4 border-r border-gray-100 flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] text-gray-400 uppercase font-bold mb-1">经营性面积</span>
-          <span className="text-lg font-bold text-blue-900">
+      <div className="grid grid-cols-2 border-b border-gray-100 bg-violet-50/30">
+        <div className="p-6 border-r border-gray-100 flex flex-col items-center justify-center text-center">
+          <span className="text-[10px] text-violet-400 uppercase font-black mb-1">经营性面积</span>
+          <span className="text-xl font-black text-[#4a3075]">
             {asset["经营性总面积（平）"] || asset["资产总面积（平）"] || asset["经营性面积（平）"] || 0}
-            <span className="text-xs ml-1 font-normal text-gray-500">㎡</span>
+            <span className="text-xs ml-1 font-normal opacity-50">㎡</span>
           </span>
         </div>
-        <div className="p-4 flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] text-gray-400 uppercase font-bold mb-1">空置率</span>
-          <span className="text-lg font-bold text-blue-900">
-            {asset["空置率（%）"]}%
+        <div className="p-6 flex flex-col items-center justify-center text-center">
+          <span className="text-[10px] text-violet-400 uppercase font-black mb-1">当前空置率</span>
+          <span className="text-xl font-black text-[#4a3075]">
+            {asset["空置率（%）"]}<span className="text-xs ml-0.5">%</span>
           </span>
         </div>
       </div>
 
       {/* Details Sections */}
-      <div className="p-6 space-y-8">
+      <div className="p-6 space-y-10">
         {/* Basic Info */}
         <section>
-          <h4 className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 border-b pb-2 border-gray-100">
-            <MapPin className="w-3.5 h-3.5" /> 基本位置
+          <h4 className="flex items-center gap-2 text-xs font-black text-gray-300 uppercase tracking-widest mb-6 border-b pb-2 border-gray-100">
+            <MapPin className="w-3.5 h-3.5" /> 地理位置详情
           </h4>
-          <div className="space-y-4">
-            <div className="flex gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg text-blue-600 h-fit"><Navigation className="w-4 h-4" /></div>
+          <div className="space-y-6">
+            <div className="flex gap-4">
+              <div className="p-2.5 bg-violet-50 rounded-xl text-violet-600 h-fit shadow-sm"><Navigation className="w-4 h-4" /></div>
               <div>
-                <p className="text-[10px] text-gray-400 font-bold uppercase">地址信息</p>
-                <p className="text-sm font-medium text-gray-800">{asset.地址}</p>
+                <p className="text-[10px] text-gray-400 font-black uppercase mb-0.5">资产坐落</p>
+                <p className="text-sm font-bold text-gray-800 leading-snug">{asset.地址}</p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg text-blue-600 h-fit"><TrendingDown className="w-4 h-4" /></div>
+            <div className="flex gap-4">
+              <div className="p-2.5 bg-violet-50 rounded-xl text-violet-600 h-fit shadow-sm"><TrendingDown className="w-4 h-4" /></div>
               <div>
-                <p className="text-[10px] text-gray-400 font-bold uppercase">附近道路</p>
-                <p className="text-sm font-medium text-gray-800 leading-relaxed">{asset.附近道路}</p>
+                <p className="text-[10px] text-gray-400 font-black uppercase mb-0.5">附近主要道路</p>
+                <p className="text-sm font-medium text-gray-600 leading-relaxed">{asset.附近道路}</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Landmarks Section */}
-        <section className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-          <h4 className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
-             周边标志性建筑
+        <section className="bg-gray-50 p-5 rounded-3xl border border-gray-100 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-violet-100/50 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110"></div>
+          <h4 className="flex items-center gap-2 text-xs font-black text-violet-300 uppercase tracking-widest mb-4">
+             周边标志性地标
           </h4>
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <p className="text-sm text-gray-600 leading-relaxed relative z-10">
             {asset.周边标志性建筑}
           </p>
         </section>
 
-        {/* Pricing & Management */}
+        {/* Pricing & Contact */}
         <section>
-          <h4 className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 border-b pb-2 border-gray-100">
-            <TrendingDown className="w-3.5 h-3.5" /> 价格与运营
+          <h4 className="flex items-center gap-2 text-xs font-black text-gray-300 uppercase tracking-widest mb-6 border-b pb-2 border-gray-100">
+            <User className="w-3.5 h-3.5" /> 运营管理与联系
           </h4>
-          <div className="grid grid-cols-1 gap-4">
-             <div className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
-                <span className="text-xs text-gray-500">租金价格 (元/平·月)</span>
-                <span className="text-sm font-bold text-blue-600">{asset["租金价格（元/平·月）"]}</span>
-             </div>
-             <div className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
-                <span className="text-xs text-gray-500">物业费 (元)</span>
-                <span className="text-sm font-bold text-gray-800">{asset["物业费（元）"]}</span>
+          <div className="grid grid-cols-1 gap-4 mb-6">
+             <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-violet-200 transition-colors">
+                <span className="text-xs font-bold text-gray-400">参考租金</span>
+                <span className="text-sm font-black text-violet-600">{asset["租金价格（元/平·月）"]}</span>
              </div>
           </div>
-        </section>
-
-        {/* Contacts */}
-        <section>
-          <h4 className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 border-b pb-2 border-gray-100">
-            <User className="w-3.5 h-3.5" /> 负责人与团队
-          </h4>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between group">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xs font-bold">招</div>
-                <div className="text-xs">
-                   <p className="text-gray-400">招商负责人</p>
-                   <p className="font-bold text-gray-700">{asset.招商负责人.replace(/\d+$/, '')}</p>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-1">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center text-violet-600 text-xs font-black">招</div>
+                <div>
+                   <p className="text-[10px] text-gray-400 font-bold">招商负责人</p>
+                   <p className="text-sm font-bold text-gray-800">{asset.招商负责人.replace(/\d+$/, '')}</p>
                 </div>
               </div>
-              <a href={`tel:${asset.招商负责人.match(/\d+/)?.[0]}`} className="p-2 bg-gray-100 rounded-full hover:bg-green-100 hover:text-green-600 transition-colors">
-                <Phone className="w-3.5 h-3.5" />
+              <a href={`tel:${asset.招商负责人.match(/\d+/)?.[0]}`} className="p-3 bg-gray-50 rounded-2xl hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                <Phone className="w-4 h-4" />
               </a>
             </div>
-            <div className="flex items-center justify-between group">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-xs font-bold">运</div>
-                <div className="text-xs">
-                   <p className="text-gray-400">运营负责人</p>
-                   <p className="font-bold text-gray-700">{asset.运营负责人.replace(/\d+$/, '')}</p>
+            <div className="flex items-center justify-between p-1">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-xs font-black">运</div>
+                <div>
+                   <p className="text-[10px] text-gray-400 font-bold">运营负责人</p>
+                   <p className="text-sm font-bold text-gray-800">{asset.运营负责人.replace(/\d+$/, '')}</p>
                 </div>
               </div>
               {asset.运营负责人 !== '/' && (
-                <a href={`tel:${asset.运营负责人.match(/\d+/)?.[0]}`} className="p-2 bg-gray-100 rounded-full hover:bg-green-100 hover:text-green-600 transition-colors">
-                  <Phone className="w-3.5 h-3.5" />
+                <a href={`tel:${asset.运营负责人.match(/\d+/)?.[0]}`} className="p-3 bg-gray-50 rounded-2xl hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                  <Phone className="w-4 h-4" />
                 </a>
               )}
             </div>
           </div>
         </section>
 
-        {/* Management Unit */}
-        <section className="pb-10">
-          <h4 className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 border-b pb-2 border-gray-100">
-            <ShieldCheck className="w-3.5 h-3.5" /> 物业管理单位
+        {/* Management */}
+        <section className="pb-12">
+          <h4 className="flex items-center gap-2 text-xs font-black text-gray-300 uppercase tracking-widest mb-6 border-b pb-2 border-gray-100">
+            <ShieldCheck className="w-3.5 h-3.5" /> 资产维护保障
           </h4>
-          <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-3">
-            <div className="p-1.5 bg-blue-600 text-white rounded-lg mt-0.5"><Building2 className="w-4 h-4" /></div>
+          <div className="p-5 bg-gradient-to-br from-violet-50 to-white rounded-3xl border border-violet-100 flex items-start gap-4 shadow-sm">
+            <div className="p-2 bg-[#4a3075] text-white rounded-xl shadow-lg"><ShieldCheck className="w-5 h-5" /></div>
             <div>
-              <p className="text-sm font-bold text-blue-900">{asset.物业管理单位}</p>
-              <p className="text-[10px] text-blue-500 font-medium uppercase mt-1">负责本资产的日常维护及安保</p>
+              <p className="text-xs text-violet-400 font-black uppercase mb-1 tracking-tighter">Property Management</p>
+              <p className="text-sm font-black text-[#4a3075] leading-tight">{asset.物业管理单位}</p>
             </div>
           </div>
         </section>
